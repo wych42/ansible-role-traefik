@@ -1,0 +1,48 @@
+---
+- name: Copy ssl certs
+  copy:
+    src: "files/certs/{{ item }}.cert"
+    dest: "{{ traefik_cert_dir }}/{{ item }}.cert"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  with_items:
+    - "{{ traefik_san_domains }}"
+  when: traefik_san_domains | length > 0
+  notify:
+    - restart traefik
+
+- name: Copy ssl keys
+  copy:
+    src: "files/certs/{{ item }}.key"
+    dest: "{{ traefik_cert_dir }}/{{ item }}.key"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  with_items:
+    - "{{ traefik_san_domains }}"
+  when: traefik_san_domains | length > 0
+  notify:
+    - restart traefik
+
+- name: Create traefik dynmaic tls config file
+  template:
+    src: "{{ traefik_config_tls_template }}.j2"
+    dest: "{{ traefik_extra_config_dir }}/tls.toml"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  when: traefik_san_domains | length > 0
+  notify:
+    - restart traefik
+
+- name: Create traefik dynmaic force-https config file
+  copy:
+    src: "force-https.toml"
+    dest: "{{ traefik_extra_config_dir }}/force-https.toml"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  when: traefik_enable_force_https
+  notify:
+    - restart traefik

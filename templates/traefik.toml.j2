@@ -1,0 +1,43 @@
+[global]
+  sendAnonymousUsage = false
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"
+
+[ping]
+  entryPoint = "https"
+
+[api]
+
+[providers]
+  providersThrottleDuration = "2s"
+  {% if traefik_enable_docker_provider %}
+  [providers.docker]
+    watch = true
+    endpoint = "unix:///var/run/docker.sock"
+  {% endif %}
+  [providers.file]
+    watch = true
+    directory = "{{ traefik_config_dir }}/conf.d/"
+
+[log]
+  level = "INFO"
+
+[accessLog]
+  filePath = "{{ traefik_log_dir }}/access.log"
+  bufferingSize = 0
+
+{% if traefik_enable_acme %}}
+[certificatesResolvers]
+  [certificatesResolvers.default]
+    [certificatesResolvers.default.acme]
+      email = "{{ traefik_acme_email }}"
+      caServer = "{{ traefik_acme_ca_server }}"
+      storage = "{{ traefik_acme_file }}"
+      [certificatesResolvers.default.acme.dnsChallenge]
+        provider = "{{ traefik_acme_provider }}"
+        delayBeforeCheck = "10s"
+{% endif %}

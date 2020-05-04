@@ -1,0 +1,6 @@
+[tls]
+{% for item in traefik_san_domains %}
+  [[tls.certificates]]
+    certFile = "{{ traefik_cert_dir }}/{{ item }}.cert"
+    keyFile  = "{{ traefik_cert_dir }}/{{ item }}.key"
+{% endfor %}

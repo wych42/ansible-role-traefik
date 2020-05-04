@@ -1,0 +1,52 @@
+---
+- name: Ensure install & config directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: traefik
+    group: traefik
+  with_items:
+    - "{{ traefik_install_dir }}"
+    - "{{ traefik_config_dir }}"
+    - "{{ traefik_extra_config_dir }}"
+    - "{{ traefik_log_dir }}"
+    - "{{ traefik_cert_dir }}"
+
+- name: Copy traefik config file
+  template:
+    src: "{{ traefik_config_template }}.j2"
+    dest: "{{ traefik_config_file }}"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  notify:
+    - restart traefik
+
+- name: Copy traefik env file
+  template:
+    src: "{{ traefik_env_template }}.j2"
+    dest: "{{ traefik_env_file }}"
+    owner: traefik
+    group: traefik
+    mode: 0644
+  notify:
+    - restart traefik
+
+- name: Check if conf.d exists
+  local_action: stat path="files/{{ inventory_hostname }}/traefik/conf.d/"
+  become: false
+  register: traefik_confd
+  tags:
+    - traefik_extra_config
+
+- name: Sync extra config
+  copy:
+    src: "{{ inventory_hostname }}/traefik/conf.d/"
+    dest: "{{ traefik_extra_config_dir }}"
+    owner: traefik
+    group: traefik
+  when: traefik_confd.stat.exists
+  notify:
+    - restart traefik
+  tags:
+    - traefik_extra_config

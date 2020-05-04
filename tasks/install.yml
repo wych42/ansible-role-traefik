@@ -1,0 +1,75 @@
+---
+- name: Check version
+  shell: "{{ traefik_bin_file }} version | grep Version | awk '{print $NF}'"
+  register: version
+  tags:
+    - check_install
+
+- set_fact: 
+    should_install_traefik: "{{ version.stdout  !=  traefik_install_version }}"
+  tags:
+    - check_install
+
+- name: Create temporary directory
+  tempfile:
+    state: directory
+    suffix: build
+  register: with_temp_dir
+  when: should_install_traefik
+
+- name: Download Traefik binary
+  get_url:
+    url: "{{ traefik_binary_url }}"
+    dest: "{{ with_temp_dir.path }}"
+    checksum: "{{ traefik_checksum }}"
+  register: with_download_traefik
+  when: should_install_traefik
+
+- name: Unarchive traefik binary
+  unarchive:
+    src: "{{ with_download_traefik.dest }}"
+    dest: "{{ traefik_install_dir }}"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+    force: true
+    extra_opts:
+      - traefik
+  notify:
+    - restart traefik
+  when: should_install_traefik
+
+- name: ensure setcap package present
+  package:
+    name: "{{ setcap_package }}"
+    state: present
+  tags:
+    - setcap_package
+  when: should_install_traefik
+
+- name: Set net_bind_service+ep on traefik
+  capabilities:
+    path: "{{ traefik_bin_file }}"
+    capability: cap_net_bind_service+ep
+    state: present
+  tags:
+    - capabilities
+  when: should_install_traefik
+
+- name: Ensure user traefik exists
+  user:
+    name: traefik
+    shell: /bin/false
+    groups: docker
+    create_home: false
+
+- name: Create traefik systemd unit
+  template:
+    src: "{{ traefik_systemd_unit_template }}.j2"
+    dest: "{{ traefik_systemd_unit_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart traefik

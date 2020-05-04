@@ -1,0 +1,27 @@
+---
+- name: Include OS Specific Variables
+  include_vars: "{{ ansible_distribution }}.yml"
+
+- name: Install traefik
+  include: "install.yml"
+  tags:
+    - traefik_install
+
+- name: Configure traefik
+  include: "config.yml"
+  notify:
+    - restart traefik
+  tags:
+    - traefik_config
+
+- name: Sync ssl certs
+  include: "tls.yml"
+  tags:
+    - traefik_tls
+
+- name: Ensure traefik service is enabled and running
+  systemd:
+    name: traefik
+    state: started
+    enabled: yes
+    daemon_reload: yes

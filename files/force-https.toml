@@ -1,0 +1,14 @@
+[http.routers.forceHttps]
+  rule = "PathPrefix(`/`)"
+  entrypoints = ["http"]
+  service = "forceHttps"
+  middlewares = ["forceHttps"]
+
+[http.middlewares]
+  [http.middlewares.forceHttps.redirectScheme]
+    scheme = "https"
+
+# dummy service
+[http.services.forceHttps.loadBalancer]
+  [[http.services.forceHttps.loadBalancer.servers]]
+      url = "http://localhost/"
