@@ -18,7 +18,7 @@ Ansible role to deploy [traefik(v2.x)](https://docs.traefik.io/) binary, systemd
   - [License](#license)
 
 ## Features
-- Install specifiy version/arch(e.g.: [v2.2.1_linux_amd64](https://github.com/containous/traefik/releases) traefik on target hosts, managed by systemd.
+- Install specified version/arch(e.g.: [v2.2.1_linux_amd64](https://github.com/containous/traefik/releases) traefik on target hosts, managed by systemd.
   - Only tested on Debian/Ubuntu system.
 - Force https enabled by default.
 - Support [User defined](https://docs.traefik.io/https/tls/#user-defined) TLS certificates.
