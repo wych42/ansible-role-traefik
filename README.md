@@ -97,7 +97,7 @@ traefik_enable_docker_provider: true
 traefik_enable_force_https: true
 traefik_enable_acme: true
 traefik_acme_ca_server: https://acme-v02.api.letsencrypt.org/directorye
-traefik_sans_domains: #optional
+traefik_san_domains: #optional
   - example.com 
 ```
 </details>
@@ -111,7 +111,7 @@ Avaliable templates are:
 - `traefik.toml.j2`: template for main config.
 - `traefik.service.j2`: template for systemd unit file.
 - `traefik.env.j2`: template for env file, used in systemd unit, provides envs like `cloudflare_api_key`.
-- `traefik.tls.toml.j2`: template for conf.d/tls.toml, used if `traefik_sans_domains` is defined, works with [User defined](https://docs.traefik.io/https/tls/#user-defined) TLS certificates.
+- `traefik.tls.toml.j2`: template for conf.d/tls.toml, used if `traefik_san_domains` is defined, works with [User defined](https://docs.traefik.io/https/tls/#user-defined) TLS certificates.
 
 
 ### Extra file provider configs
@@ -205,7 +205,7 @@ ansible-vault encrypt --vault-password-file=./.vault_pass  files/certs/example.c
 
 Create `group_vars/all.yml` with:
 ```yml
-traefik_sans_domains:
+traefik_san_domains:
   - example.com
 traefik_enable_acme: false
 ```
