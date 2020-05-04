@@ -30,7 +30,7 @@
   filePath = "{{ traefik_log_dir }}/access.log"
   bufferingSize = 0
 
-{% if traefik_enable_acme %}}
+{% if traefik_enable_acme %}
 [certificatesResolvers]
   [certificatesResolvers.default]
     [certificatesResolvers.default.acme]
