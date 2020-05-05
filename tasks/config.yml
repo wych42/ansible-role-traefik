@@ -6,7 +6,6 @@
     owner: traefik
     group: traefik
   with_items:
-    - "{{ traefik_install_dir }}"
     - "{{ traefik_config_dir }}"
     - "{{ traefik_extra_config_dir }}"
     - "{{ traefik_log_dir }}"

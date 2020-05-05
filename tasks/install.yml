@@ -10,6 +10,15 @@
   tags:
     - check_install
 
+- name: Ensure install directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+  with_items:
+    - "{{ traefik_install_dir }}"
+
 - name: Create temporary directory
   tempfile:
     state: directory
