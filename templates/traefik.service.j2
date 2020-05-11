@@ -33,7 +33,9 @@ ProtectKernelTunables=true
 ProtectControlGroups=true
 
 # allow writing of acme.json
+{% if traefik_enable_acme %}
 ReadWritePaths={{ traefik_acme_file }}
+{% endif %}
 ReadWritePaths={{ traefik_log_dir }}
 
 [Install]
