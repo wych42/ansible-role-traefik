@@ -70,7 +70,8 @@
   user:
     name: traefik
     shell: /bin/false
-    groups: docker
+    groups: "{{ traefik_user_extra_groups }}"
+    append: yes
     create_home: false
 
 - name: Create traefik systemd unit

@@ -94,6 +94,9 @@ traefik_systemd_unit_template: traefik.service
 traefik_env_template: traefik.env
 
 traefik_enable_docker_provider: true
+# set this to a comma separated string. 
+# when traefik_enable_docker_provider=true or user traefik should be add to other groups.
+traefik_user_extra_groups: "docker"
 traefik_enable_force_https: true
 traefik_enable_acme: true
 traefik_acme_ca_server: https://acme-v02.api.letsencrypt.org/directorye
